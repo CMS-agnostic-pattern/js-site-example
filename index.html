@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Simple Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function() {
+            // the adress of the content repository
+            let baseUrl = "https://raw.githubusercontent.com/vasilyyaremchuk/content-examples/main/simple_site/";
+            $.getJSON(baseUrl + "index.json", function(data) {
+                $.each(data.basic_menu_item, function(key, value) {
+                    // get list of menu objects
+                    $.getJSON(baseUrl + value, function(menu) {
+                        $("#menu").append(`<li><a href="?q=${key}" id="${key}">${menu.title}</a></li>`);
+                    });
+                });
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryParam = urlParams.get('q') ?? 'home';
+                $.each(data.basic_page, function(key, value) {
+                    // get requred page
+                    if (key === queryParam) {
+                        $.getJSON(baseUrl + value, function(page) {
+                            $("#title").text(page.title);
+                            $("#content").text(page.content);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <ul id="menu"></ul>
+    <h1 id="title"></h1>
+    <p id="content"></p>
+</body>
+</html>
